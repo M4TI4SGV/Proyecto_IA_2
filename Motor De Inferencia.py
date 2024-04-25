@@ -1,11 +1,11 @@
 def get_input():
-    clausulas = []
+    clausulas = set()
     print("Introduce las cláusulas de la base de conocimiento (escribe 'fin' para terminar):")
     while True:
         entrada = input("Clausula: ")
         if entrada.lower() == 'fin':
             break
-        clausulas.append(frozenset(entrada.replace('∨', '').split()))
+        clausulas.add(frozenset(entrada.replace('∨', '').split()))
 
     consulta = input("Introduce la consulta: ")
     query = frozenset([consulta])
@@ -27,13 +27,11 @@ def resolver(ci, cj):
     return resolventes
 
 def resolucion(clausulas, query):
-    clausulas.append(frozenset(['~' + list(query)[0]]))  # Negamos la consulta y la agregamos a las cláusulas
+    clausulas.add(frozenset(['~' + list(query)[0]]))  # Negamos la consulta y la agregamos a las cláusulas
     nuevas = set()
 
     while True:
-        n = len(clausulas)
-        pares = [(clausulas[i], clausulas[j])
-                 for i in range(n) for j in range(i+1, n)]
+        pares = [(ci, cj) for ci in clausulas for cj in clausulas if ci != cj]
         
         for (ci, cj) in pares:
             resolventes = resolver(ci, cj)
